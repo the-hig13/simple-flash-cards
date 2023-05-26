@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flashcards</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        #flashcards-container {
+            max-width: 90vw;
+            width: 525px;
+            margin: 0 auto;
+        }
+        .card {
+            width: 500px;
+            height: 250px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .card.edit-mode {
+            border: 2px solid #4CAF50;
+        }
+        .card .content {
+            display: none;
+        }
+        .card.edit-mode .content {
+            display: block;
+        }
+        .card.edit-mode .question,
+        .card.edit-mode .answer {
+            display: none;
+        }
+        .card.edit-mode .edit-buttons .edit-button {
+            display: none;
+        }
+        .card .edit-buttons .save-button {
+            display: none;
+        }
+        .card.edit-mode .edit-buttons .save-button {
+            display: block;
+        }
+        .edit-buttons {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .edit-mode .content {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            word-break: break-word;
+            white-space: normal;
+            background-color: white;
+            border: 1px solid #ccc;
+        }
+        .card:not(.edit-mode) .question {
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            #flashcards-container {
+                width: 90vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Flashcards</h1>
+    <div id="flashcards-container"></div>
+
+    <script>
+        const flashcards = [
+            { question: 'Question 1', answer: 'Answer 1' },
+            { question: 'Question 2', answer: 'Answer 2' },
+            { question: 'Question 3', answer: 'Answer 3' }
+            // Add more flashcards as needed
+        ];
+
+        const flashcardsContainer = document.getElementById('flashcards-container');
+
+        flashcards.forEach((flashcard, index) => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+
+            const question = document.createElement('div');
+            question.classList.add('question');
+            question.textContent = flashcard.question;
+
+            const questionInput = document.createElement('div');
+            questionInput.contentEditable = true;
+            questionInput.classList.add('content');
+            questionInput.textContent = flashcard.question;
+
+            const answer = document.createElement('div');
+            answer.classList.add('answer');
+            answer.textContent = flashcard.answer;
+			answer.style.display = 'none';
+
+            const answerInput = document.createElement('div');
+            answerInput.contentEditable = true;
+            answerInput.classList.add('content');
+            answerInput.textContent = flashcard.answer;
+
+            const editButton = document.createElement('button');
+            editButton.classList.add('edit-button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', function (event) {
+                event.stopPropagation();
+                card.classList.add('edit-mode');
+            });
+
+            const saveButton = document.createElement('button');
+            saveButton.classList.add('save-button');
+            saveButton.textContent = 'Save';
+            saveButton.addEventListener('click', function (event) {
+                event.stopPropagation();
+                const newQuestion = questionInput.textContent;
+                const newAnswer = answerInput.textContent;
+                flashcards[index].question = newQuestion;
+                flashcards[index].answer = newAnswer;
+                question.textContent = newQuestion;
+                answer.textContent = newAnswer;
+                card.classList.remove('edit-mode');
+            });
+
+            card.addEventListener('click', function () {
+                if (!card.classList.contains('edit-mode')) {
+                    answer.style.display = (answer.style.display === 'none') ? 'block' : 'none';
+                }
+            });
+
+            const editButtons = document.createElement('div');
+            editButtons.classList.add('edit-buttons');
+            editButtons.appendChild(editButton);
+            editButtons.appendChild(saveButton);
+
+            card.appendChild(question);
+            card.appendChild(questionInput);
+            card.appendChild(answer);
+            card.appendChild(answerInput);
+            card.appendChild(editButtons);
+            flashcardsContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
