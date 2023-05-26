@@ -85,7 +85,9 @@
     <div id="flashcards-container"></div>
 
     <script>
-        const flashcards = [
+        // Load flashcards from local storage or use default data
+        const flashcardsData = localStorage.getItem('flashcards');
+        const flashcards = flashcardsData ? JSON.parse(flashcardsData) : [
             { question: 'Question 1', answer: 'Answer 1' },
             { question: 'Question 2', answer: 'Answer 2' },
             { question: 'Question 3', answer: 'Answer 3' }
@@ -94,7 +96,7 @@
 
         const flashcardsContainer = document.getElementById('flashcards-container');
 
-        flashcards.forEach((flashcard, index) => {
+        function createFlashcardElement(flashcard, index) {
             const card = document.createElement('div');
             card.classList.add('card');
 
@@ -110,7 +112,7 @@
             const answer = document.createElement('div');
             answer.classList.add('answer');
             answer.textContent = flashcard.answer;
-			answer.style.display = 'none';
+	    answer.style.display = 'none';
 
             const answerInput = document.createElement('div');
             answerInput.contentEditable = true;
@@ -137,6 +139,7 @@
                 question.textContent = newQuestion;
                 answer.textContent = newAnswer;
                 card.classList.remove('edit-mode');
+                saveFlashcards();
             });
 
             card.addEventListener('click', function () {
@@ -155,8 +158,23 @@
             card.appendChild(answer);
             card.appendChild(answerInput);
             card.appendChild(editButtons);
-            flashcardsContainer.appendChild(card);
-        });
+
+            return card;
+        }
+
+        function saveFlashcards() {
+            localStorage.setItem('flashcards', JSON.stringify(flashcards));
+        }
+
+        function renderFlashcards() {
+            flashcardsContainer.innerHTML = '';
+            flashcards.forEach((flashcard, index) => {
+                const card = createFlashcardElement(flashcard, index);
+                flashcardsContainer.appendChild(card);
+            });
+        }
+
+        renderFlashcards();
     </script>
 </body>
 </html>
